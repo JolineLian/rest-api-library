@@ -13,6 +13,7 @@ let books = [
     { id: 3, title: 'Moby Dick', author: 'Herman Melville', year: 1851, isAvailable: true }
 ];
 
+// Add a new book
 app.post('/books', (req,res) => {
     const book = {
         id: books.length + 1,
@@ -25,30 +26,33 @@ app.post('/books', (req,res) => {
     res.send(book);
 })
 
+// List all available books
 app.get('/books/available', (req, res) => {
-    res.send(books.filter(book => book.isAvailable===true));
+    res.send(books.filter(book => book.isAvailable === true));
 })
 
+// Borrow a book by title
 app.post('/books/borrow', (req, res) => {
     let borrow = req.body.title;
     let index = books.findIndex(book => book.title == borrow);
-    if (books[index]!=undefined && books[index].isAvailable == true) {
+    if (books[index] != undefined && books[index].isAvailable == true) {
         books[index].isAvailable = false;
         res.send(books[index]);
     } else {
-        res.status(404).send('book not found');
+        res.status(404).send('Book not available or already borrowed');
     }
 })
 
+// Return a borrowed book
 app.post('/books/return', (req, res) => {
     let putBack = req.body.title;
-    let index = books.findIndex(book => book.title == putBack);
-    if (books[index]!=undefined && books[index].isAvailable == false) {
+    let index = books.findIndex(book => book.title === putBack);
+    if (books[index] != undefined && books[index].isAvailable === false) {
         books[index].isAvailable = true;
         res.send(books[index]);
     } else {
-        res.status(404).send('book not found');
+        res.status(404).send('Book not found or not borrowed');
     }
 })
 
-app.listen(PORT, () => console.log(`Server startred on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
